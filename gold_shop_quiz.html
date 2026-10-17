@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#7b151b">
+<title>เกมทายร้านส่งทอง</title>
+<style>
+:root{--red:#7b151b;--gold:#d8ad50;--cream:#fff8e8;--ink:#29221b}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Noto Sans Thai",sans-serif;background:linear-gradient(145deg,#4c090e,#8d2024 55%,#bd8733);color:var(--ink);min-height:100vh}
+main{max-width:620px;margin:auto;padding:18px 14px 36px}.brand{text-align:center;color:#fff8e8;padding:14px 0 18px}.brand .emblem{font-size:36px}.brand h1{font-size:26px;margin:3px 0}.brand p{margin:0;opacity:.9}
+.card{background:var(--cream);border:1px solid #e9d4a2;border-radius:20px;padding:20px;box-shadow:0 12px 30px #2a000044;margin-bottom:14px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.pill{border-radius:999px;background:#f0e1bf;padding:7px 11px;font-size:13px;font-weight:700}.timer{color:var(--red);font-variant-numeric:tabular-nums}
+.progress{height:7px;background:#e6d9bd;border-radius:99px;overflow:hidden;margin:15px 0}.bar{height:100%;width:0;background:var(--gold);transition:width .2s}
+h2{margin:12px 0 4px;font-size:21px}.question{font-size:30px;font-weight:850;text-align:center;padding:24px 4px;color:var(--red);letter-spacing:.4px}
+.muted{color:#756b5b;font-size:13px}.choices{display:grid;gap:10px}.choice{width:100%;border:2px solid #e5d4ae;border-radius:13px;background:#fffdf7;padding:14px;text-align:left;font-size:21px;font-weight:750;cursor:pointer;color:#282019;display:flex;gap:12px;align-items:center}.choice .letter{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;background:#f2e5c7;font-size:14px;flex-shrink:0}.choice:disabled{cursor:default;opacity:1}.choice.correct{border-color:#27834b;background:#e7f6eb}.choice.wrong{border-color:#b62e2e;background:#ffebeb}.choice.correct .letter{background:#27834b;color:white}
+button.primary,button.secondary{border:0;border-radius:12px;padding:13px 16px;font-size:16px;font-weight:800;cursor:pointer}button.primary{background:var(--red);color:white;width:100%;margin-top:14px}button.secondary{background:#ead9b2;color:#4c3010}.hidden{display:none!important}.feedback{font-weight:800;margin-top:12px;min-height:24px}.score-big{font-size:40px;font-weight:900;color:var(--red);text-align:center}.field{width:100%;border:1px solid #d8c49b;border-radius:10px;padding:12px;font:inherit;margin-top:7px}.board{width:100%;border-collapse:collapse;margin-top:10px}.board th,.board td{padding:9px 5px;text-align:left;border-bottom:1px solid #e7d8b7;font-size:14px}.board th{color:#766344}.board td:last-child,.board th:last-child{text-align:right;font-weight:800}.empty{text-align:center;padding:18px;color:#766b58}
+footer{text-align:center;color:#fff5d9;font-size:12px;line-height:1.6;padding:4px 10px}
+</style></head>
+<body><main>
+<header class="brand"><div class="emblem">🏆 ✨</div><h1>เกมทายร้านส่งทอง</h1><p>จำชื่อร้านให้แม่น ตอบให้ไว คว้าคะแนนสูงสุด!</p></header>
+<section class="card" id="start">
+<div class="row"><span class="pill">📝 20 ข้อ</span><span class="pill">⏱️ ข้อละ 20 วินาที</span><span class="pill">🥇 Top 10</span></div>
+<h2>พร้อมประลองหรือยัง?</h2><p>พิมพ์ชื่อผู้เล่นก่อนเริ่ม คะแนนคิดจากความถูกต้องและความเร็ว</p>
+<label for="player">ชื่อผู้เล่น</label><input class="field" id="player" maxlength="24" placeholder="เช่น นานา">
+<p class="muted">ตอบถูกได้สูงสุด 1,000 คะแนนต่อข้อ คะแนนจะลดลงตามเวลาที่ใช้ ตอบผิดหรือหมดเวลาได้ 0 คะแนน</p>
+<button class="primary" id="startBtn">เริ่มเกม</button>
+</section>
+<section class="card hidden" id="game">
+<div class="row"><span class="pill" id="qCount">ข้อ 1 / 20</span><span class="pill">คะแนน <b id="score">0</b></span><span class="pill timer">⏱ <b id="time">20.0</b> วิ</span></div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div class="muted">ชื่อร้านส่งทองภาษาไทย</div><div class="question" id="question"></div>
+<div class="muted" style="text-align:center;margin-bottom:12px">เลือกชื่อภาษาจีนที่ตรงกัน</div><div class="choices" id="choices"></div><div class="feedback" id="feedback" aria-live="polite"></div>
+<button class="primary hidden" id="nextBtn">ข้อต่อไป →</button>
+</section>
+<section class="card hidden" id="result">
+<div style="text-align:center;font-size:32px">🎉🏆</div><h2 style="text-align:center">จบเกมแล้ว!</h2><div class="score-big" id="finalScore">0</div><p style="text-align:center">คะแนนรวม</p><div id="resultMsg" style="text-align:center;font-weight:700"></div>
+<button class="primary" id="saveBtn">บันทึกคะแนนลงกระดาน</button><button class="primary hidden" id="againBtn">เล่นอีกครั้ง</button>
+</section>
+<section class="card" id="leaderboard"><div class="row"><h2 style="margin:0">🏅 กระดานคะแนน Top 10</h2><span class="pill" id="boardDate"></span></div><p class="muted">คะแนนประจำวันบนอุปกรณ์นี้</p><table class="board"><thead><tr><th>อันดับ</th><th>ผู้เล่น</th><th>คะแนน</th></tr></thead><tbody id="boardBody"></tbody></table><div class="row" style="margin-top:12px"><button class="secondary" id="clearBtn">ล้างคะแนนในอุปกรณ์นี้</button></div></section>
+<footer>เกมฝึกจำชื่อร้านส่งทอง • คะแนน Top 10 เก็บในเบราว์เซอร์เครื่องนี้เท่านั้น<br>เวอร์ชันนี้ยังไม่ใช่กระดานคะแนนออนไลน์ที่แชร์ร่วมกันทุกคน</footer>
+</main>
+<script>
+const shops=[
+["หลูชั่งฮวด","吕 創 發"],["ซินคี่เชียง","新 啟 昌"],["น่ำช่วงหลี","南 川 利"],["แต้จิบฮุย","鄭 集 輝"],["ซินเจี้ยเชียง","新 正 昌"],["เฮงบ้วนหลี","王 萬 利"],["เลี่ยงเส็งเฮง","聯 盛 興"],["ย่งฮะฮวด","榮 合 發"],["หลูยู่ฮวด","吕 裕 發"],["ไท้เส็งเฮง","泰 盛 興"],["อั้งเซ่งเฮง","洪 成 興"],["โง้วเฮงล้ง","吳 興 隆"],["เคว่งหลี","宏 利"],["หลีเฮง","麗 興"],["จิบฮุย","集 輝"],["น่ำเชียง","南 昌"],["เปียเซ้ง","宏 成"],["อึ้งคิ้งเซ้ง","黃 勤 成"],["ลี้ฮันเซน","李 漢 弄"],["SG ชายน์นิ่งโกลด์","SG Shine Gold"]
+];
+const $=id=>document.getElementById(id);
+let order=[],idx=0,score=0,timer=null,startAt=0,remaining=20,answered=false,playerName="",lastPoints=0;
+function dateKey(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function storageKey(){return "goldShopQuizBoard:"+dateKey()}
+function loadBoard(){try{return JSON.parse(localStorage.getItem(storageKey())||"[]")}catch(e){return []}}
+function renderBoard(){ $("boardDate").textContent=dateKey();const board=loadBoard().sort((a,b)=>b.score-a.score||a.time-b.time).slice(0,10);$("boardBody").innerHTML="";if(!board.length){$("boardBody").innerHTML='<tr><td colspan="3" class="empty">ยังไม่มีคะแนนวันนี้ มาเป็นคนแรกได้เลย!</td></tr>';return}board.forEach((p,i)=>{const tr=document.createElement("tr");tr.innerHTML=`<td>${["🥇","🥈","🥉"][i]||i+1}</td><td></td><td>${p.score.toLocaleString()}</td>`;tr.children[1].textContent=p.name; $("boardBody").appendChild(tr)})}
+function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function begin(){playerName=$("player").value.trim()||"ผู้เล่น";idx=0;score=0;order=shuffle([...Array(shops.length).keys()]);$("start").classList.add("hidden");$("result").classList.add("hidden");$("game").classList.remove("hidden");$("score").textContent=score;showQuestion()}
+function showQuestion(){clearInterval(timer);answered=false;remaining=20;$("feedback").textContent="";$("nextBtn").classList.add("hidden");$("qCount").textContent=`ข้อ ${idx+1} / 20`;$("time").textContent="20.0";$("bar").style.width="100%";
+const shop=shops[order[idx]];$("question").textContent=shop[0];let distractors=shuffle(shops.map((s,i)=>i).filter(i=>i!==order[idx])).slice(0,3);let options=shuffle([order[idx],...distractors]);$("choices").innerHTML="";options.forEach((n,i)=>{const b=document.createElement("button");b.className="choice";b.innerHTML=`<span class="letter">${"ABCD"[i]}</span><span></span>`;b.children[1].textContent=shops[n][1];b.onclick=()=>answer(n,b);$("choices").appendChild(b)});startAt=Date.now();timer=setInterval(()=>{remaining=Math.max(0,20-(Date.now()-startAt)/1000);$("time").textContent=remaining.toFixed(1);$("bar").style.width=(remaining/20*100)+"%";if(remaining<=0)answer(-1,null)},100)}
+function answer(n,btn){if(answered)return;answered=true;clearInterval(timer);const correct=order[idx];const elapsed=Math.min(20,(Date.now()-startAt)/1000);lastPoints=n===correct?Math.max(100,Math.round(1000*(20-elapsed)/20)):0;if(n===correct){score+=lastPoints;$("feedback").textContent=`正确！ +${lastPoints} 分 🎉`;$("feedback").style.color="#27834b"}else{$("feedback").textContent=n===-1?"时间到！":"答错了！";$("feedback").style.color="#b62e2e"}
+[...$("choices").children].forEach((b,i)=>{b.disabled=true;const label=b.children[1].textContent;if(label===shops[correct][1])b.classList.add("correct");if(btn===b&&n!==correct)b.classList.add("wrong")});$("score").textContent=score;$("nextBtn").textContent=idx===19?"ดูผลคะแนน →":"ข้อต่อไป →";$("nextBtn").classList.remove("hidden")}
+function next(){idx++;if(idx>=20){finish();return}showQuestion()}
+function finish(){clearInterval(timer);$("game").classList.add("hidden");$("result").classList.remove("hidden");$("finalScore").textContent=score.toLocaleString();$("resultMsg").textContent=`${playerName} ตอบครบ 20 ข้อ`; $("saveBtn").classList.remove("hidden");$("againBtn").classList.add("hidden")}
+function save(){let board=loadBoard();board.push({name:playerName,score,time:Date.now()});board.sort((a,b)=>b.score-a.score||a.time-b.time);localStorage.setItem(storageKey(),JSON.stringify(board.slice(0,10)));renderBoard();$("saveBtn").classList.add("hidden");$("againBtn").classList.remove("hidden")}
+$("startBtn").onclick=begin;$("nextBtn").onclick=next;$("saveBtn").onclick=save;$("againBtn").onclick=()=>{$("result").classList.add("hidden");$("start").classList.remove("hidden");$("player").value=playerName};$("clearBtn").onclick=()=>{if(confirm("ต้องการล้างคะแนนวันนี้ในอุปกรณ์นี้ใช่หรือไม่?")){localStorage.removeItem(storageKey());renderBoard()}};renderBoard();
+</script></body></html>
